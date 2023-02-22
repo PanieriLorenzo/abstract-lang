@@ -37,7 +37,7 @@ All sets must have a name, formally an *identifier*. Identifiers must be unique 
 Foo { A; }
 
 # ...is different from this inner set A
-Bar { B; }
+Bar { A; }
 
 # this is not allowed (actually it is allowed, but will result in A only being added once to the set)
 Baz { A; A; }
