@@ -125,6 +125,12 @@ A -> B as "any string goes here";
 C -> D: foo as "any string goes here";
 ```
 
+## Practical Stuff
+
+A parser for the language is provided, as well as compilers for [graphviz]() and [mermaid](). The toolchain is implemented in Python, with no ambition of being particularly clever or efficient.
+
+The parser has no separate lexing phase, as the language is very simple, and is written ad-hoc with no particular parsing architecture in mind.
+
 ## Formal Specification
 
 TODO
