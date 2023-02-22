@@ -137,8 +137,6 @@ A -> B as "any string goes here";
 C -> D: foo as "any string goes here";
 ```
 
-You can add modifiers to 
-
 ## Practical Stuff
 
 A parser for the language is provided, as well as compilers for [graphviz]() and [mermaid](). The toolchain is implemented in Python, with no ambition of being particularly clever or efficient.
