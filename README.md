@@ -41,31 +41,18 @@ Bar { B; }
 Baz { A; A; }
 ```
 
-Note that it is not explicitly required for sets to not contain duplicates. For instance, sets will often contain many instances of the empty set.
-
-Now for some notation:
-
-```
-# this is a comment
-
-A;    # an empty set called 'A'
-B {}  # an empty set called 'B', this notation is also allowed
-C { A; B; }   # a set called 'C', which contains two empty sets 'A' and 'B'.
-
-# a very nested set
-D { A { A; B; } B { A; B; } }
-```
+Note that some rules of set theory here are not strictly required, but naturally arise as a consequence of the syntax and semantics of the language. For example, it is not explicitly required that sets do not contain themselves, but the syntax makes it impossible to represent sets that contain themselves, so they naturally never arise.
 
 ### Maps
 
 A map expresses a relationship between two *things*. 
 
-To map two things, they must have an identifier. Currently, mappings themselves cannot have an identifier, so the only mappings that are possible are between sets.
-
-Notation:
 ```
+# a map between A and B
 A -> B;
-A -> B -> C;    # syntax sugar for A -> B; B -> C;
+
+# syntax sugar for A -> B; B -> C;
+A -> B -> C;
 ```
 
 A map is also a thing, and thus can be part of a set:
@@ -74,7 +61,69 @@ A map is also a thing, and thus can be part of a set:
 A { A -> B; }
 ```
 
+A map can also be given a name, but unlike sets, this isn't mandatory:
 
+```
+A -> B: depends_on
+```
+
+> TODO: right now a maps name is not really an identifier, so you can't use it for making maps of maps.
+
+You can also map things that are inside a set to things that are inside another set, but you need to use *qualified identifiers* in order to refer to them:
+
+```
+Foo { A; }
+Bar { A; }
+Foo.A -> Bar.A;
+```
+
+Things can get pretty funky when you do very nested things...
+
+```
+A { A { A; B; } B { A; B; } }
+B { A { A; B; } B { A; B; } }
+
+A.A.A -> B.A.A;
+A.B.A -> A.A.B;
+```
+
+And you are also allowed to map something to itself:
+
+```
+A -> A;
+```
+
+And you can map a thing to the set that contains it:
+
+```
+A { A; }
+A.A -> A;
+A -> A.A;
+```
+
+Note that it is not possible to place a map inside of a set, if the map contains the set. This arises from the syntax of the language, and isn't explicitly enforced.
+
+You don't need to define the two things a map connects, they are implicitly defined as soon as they are referred to, for example:
+
+```
+# this implies the existence of the sets A and B
+A -> B;
+```
+
+### Other stuff
+
+There are a couple of other features, that don't have any formal significance, they are purely convenient. 
+
+You can label things with arbitrary strings. These labels are used for example when generating a graphical representation of the data:
+
+```
+# a labelled set
+A {} as "any string goes here";
+
+# labelled maps
+A -> B as "any string goes here";
+C -> D: foo as "any string goes here";
+```
 
 ## Formal Specification
 
