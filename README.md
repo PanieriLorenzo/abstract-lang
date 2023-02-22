@@ -5,6 +5,8 @@ A markup language for pure abstractions. The name is temprorary.
 
 Abstract lang is a [markup language]() that can only represent abstract concepts such as sets and mappings. It has some similarity to set theory, but it doesn't strictly follow the rules of any existing set theory. It is mostly useful to represent organizational data, such as diagrams, dependency graphs and data flows.
 
+I developed it originally, as I was frustrated with the existing diagram markdown languages like [graphviz](), [mermaid]() and [plantuml]() for their clunkyness, lack of generality and lack of namespaces, but I realized that it may be useful not only for drawing diagrams but as a data representation format.
+
 ## Casual Specification
 
 Here follows a casual specification of the language. There is also a formal specification if that's more your thing.
