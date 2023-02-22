@@ -38,9 +38,19 @@ Foo { A; }
 
 # ...is different from this inner set A
 Bar { A; }
+```
 
-# this is not allowed (actually it is allowed, but will result in A only being added once to the set)
-Baz { A; A; }
+If the same *thing* is added to a set twice, it is equivalent to adding it only once. If the two things are different but have the same identifier, they will either be merged, or if they can't be merged, there will be an error. For example, adding two different sets with the same name, results in adding the set with the conjunction of the two:
+
+```python
+Foo {
+  A { X; Y; }
+  A { Y; Z; }
+}
+# is equivalent to:
+Foo {
+  A { X; Y; Z; }
+}
 ```
 
 Note that some rules of set theory here are not strictly required, but naturally arise as a consequence of the syntax and semantics of the language. For example, it is not explicitly required that sets do not contain themselves, but the syntax makes it impossible to represent sets that contain themselves, so they naturally never arise.
@@ -126,6 +136,8 @@ A {} as "any string goes here";
 A -> B as "any string goes here";
 C -> D: foo as "any string goes here";
 ```
+
+You can add modifiers to 
 
 ## Practical Stuff
 
