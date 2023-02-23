@@ -1,6 +1,7 @@
 from parser import *
 from ast_ import *
 from preprocessor import *
+from ast_viz_mm import *
 
 s = \
 """# this is a comment lmao
@@ -25,9 +26,9 @@ Foo {
 
 # some fucky shit:
 X    . Y.Z ->Z.     Y.   X ;
-;; ;    ;; ;   ;   ;;; ;
+;; ;    ;; ;  ;;;
 """
 
 if __name__ == "__main__":
     
-    parse_file(preprocess(s)).pprint()
+    print(ast_viz_mm(parse(preprocess(s))))

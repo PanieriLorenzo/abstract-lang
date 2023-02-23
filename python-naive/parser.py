@@ -113,7 +113,7 @@ def _parse_set_body(s: str) -> SetBody:
     raise SyntaxError(s)
     
 
-def parse_file(s: str) -> NamedSet:
+def parse(s: str) -> NamedSet:
     return NamedSet(Id.flat("__main__"), _parse_set_body(s))
 
 # def parse(src: ASTNode) -> SetBody:
