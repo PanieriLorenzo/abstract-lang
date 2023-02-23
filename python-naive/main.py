@@ -30,4 +30,4 @@ X    . Y.Z ->Z.     Y.   X ;
 
 if __name__ == "__main__":
     
-    print(parse_set_body(preprocess(s)))
+    parse_file(preprocess(s)).pprint()

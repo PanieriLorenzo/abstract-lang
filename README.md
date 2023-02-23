@@ -143,6 +143,8 @@ A parser for the language is provided, as well as compilers for [graphviz]() and
 
 The parser has no separate lexing phase, as the language is very simple, and is written ad-hoc with no particular parsing architecture in mind.
 
+The most stable toolchain right now is in `python-naive/`, although I will experiment with different implementations, perhaps in other languages, so expect some other folders.
+
 ## Formal Specification
 
 TODO
