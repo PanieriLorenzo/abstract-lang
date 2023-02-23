@@ -10,6 +10,8 @@ U -> V;
 D -> C.A;
 C.B -> D;
 Foo -> Bar -> Baz.A;
+A.A.A.A -> B.B.B.B -> C.C.C.C;
+A .A. A . A -> B   .B  .    B. B    ->C. C.  C.   C        ;;; ;;
 Baz.B -> Foo.A;
 C {
     A;
@@ -28,4 +30,4 @@ X    . Y.Z ->Z.     Y.   X ;
 
 if __name__ == "__main__":
     
-    print(parse_source(preprocess(s)))
+    print(parse_set_body(preprocess(s)))

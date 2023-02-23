@@ -1,0 +1,16 @@
+@startebnf
+file = ?SOF?, set_bdoy, ?EOF?;
+
+named_set = id, ";"
+          | id, "\{", "\}"
+          | id, "\{", set_body, "\}";
+
+id = "\w+"
+   | "\w+", "\.", id;
+
+set_body = (named_set | map)
+         | (named_set | map), set_body;
+
+map = id, "->", id
+    | id, "->", map;
+@endebnf
