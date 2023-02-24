@@ -1,7 +1,7 @@
 from parser import *
 from ast_ import *
 from preprocessor import *
-from ast_viz_mm import *
+from ast_viz import *
 
 s = \
 """# this is a comment lmao

@@ -93,7 +93,7 @@ def _parse_set_body(s: str) -> SetBody:
         return _parse_set_body(m.group('rest'))
     if (m := _empty_set_1_re.match(s)) or (m := _empty_set_2_re.match(s)):
         return SetBody(
-            NamedSet.empty(m.group('id')),
+            NamedSet.empty(_parse_id(m.group('id'))),
             _parse_set_body(m.group('rest'))
         )
     if m := _map_re.match(s):
@@ -104,14 +104,14 @@ def _parse_set_body(s: str) -> SetBody:
     if m := _irregular_set_re.match(s):
         lhs, rhs = _nested_brace_helper(m.group('irregular'))
         return SetBody(
-            NamedSet(Id.flat(m.group('id')), _parse_set_body(lhs)),
+            NamedSet(_parse_id(m.group('id')), _parse_set_body(lhs)),
             _parse_set_body(' '.join([rhs, m.group('rest')]).strip())
         )
     if len(s.strip()) == 0:
         return SetBody.empty()
-    
+
     raise SyntaxError(s)
-    
+
 
 def parse(s: str) -> NamedSet:
     return NamedSet(Id.flat("__main__"), _parse_set_body(s))
