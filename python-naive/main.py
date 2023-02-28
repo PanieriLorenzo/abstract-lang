@@ -1,10 +1,11 @@
-from parser import *
+from parser_ import *
 from ast_ import *
 from preprocessor import *
 from ast_viz import *
+from optimizer import *
 
-s = \
-"""# this is a comment lmao
+
+s1 = """# this is a comment lmao
 A;
 B {}
 U -> V;
@@ -29,6 +30,11 @@ X    . Y.Z ->Z.     Y.   X ;
 ;; ;    ;; ;  ;;;
 """
 
+s2 = """\
+A.A;
+B.B;
+"""
+
 if __name__ == "__main__":
-    
-    print(ast_viz_mm(parse(preprocess(s))))
+
+    parse(preprocess(s2)).pprint()
