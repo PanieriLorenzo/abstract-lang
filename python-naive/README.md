@@ -53,3 +53,14 @@ A {
     B;
 }
 ```
+
+
+```python
+#before
+A.A;
+
+#after
+A {
+    A {}
+}
+```

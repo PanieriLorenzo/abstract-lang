@@ -31,16 +31,12 @@ class Id(TraitPPrint):
         print("   " * (indent + 1), self.left)
         if self.right:
             self.right._pprint(indent + 1)
-
-    def _get_ancestry(self, l: list[Id]) -> list[Id]:
-        
-
-    def get_ancestry(self) -> list[Id]:
-        """get a list of every ancestor Id recursively
-
-        ## Examples
-        - `A.B.C` becomes `[A, B, C]`
-        """
+    
+    def head(self) -> tuple[Id, Id | None]:
+        return Id.flat(self.left), self.right
+    
+    def is_flat(self) -> bool:
+        return self.right is None
 
 
 
@@ -81,6 +77,7 @@ class SetBody(TraitPPrint):
         self.right._pprint(indent)
 
 
+
 @dataclass
 class NamedSet(TraitPPrint):
     id: Id
@@ -99,6 +96,15 @@ class NamedSet(TraitPPrint):
         self.id._pprint(indent + 1)
         self.set_._pprint(indent + 1)
 
+    def normalize(self) -> NamedSet:
+        hd, tail = self.id.head()
+        if tail is None:
+            return NamedSet(self.id, self.set_.normalize())
+        return NamedSet(
+            hd,
+            self.set_.union(NamedSet.empty(tail).normalize()).normalize()
+        )
+        
 
 ASTNode = NamedSet | SetBody | Map | Id | None
 
