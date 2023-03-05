@@ -75,7 +75,16 @@ class SetBody(TraitPPrint):
         if not self.right:
             return
         self.right._pprint(indent)
-
+    
+    def normalize(self) -> SetBody:
+        if self.left is None:
+            return self
+        return SetBody(
+            self.left.normalize() if type(self.left) == NamedSet else self.left, 
+            self.right.normalize() if self.right is not None else None)
+    
+    def append(self, other: NamedSet) -> SetBody:
+        return SetBody(other, self)
 
 
 @dataclass
@@ -102,7 +111,7 @@ class NamedSet(TraitPPrint):
             return NamedSet(self.id, self.set_.normalize())
         return NamedSet(
             hd,
-            self.set_.union(NamedSet.empty(tail).normalize()).normalize()
+            self.set_.append(NamedSet.empty(tail).normalize()).normalize()
         )
         
 

@@ -37,4 +37,6 @@ B.B;
 
 if __name__ == "__main__":
 
-    parse(preprocess(s2)).pprint()
+    a = parse(preprocess(s1))
+    a.pprint()
+    a.normalize().pprint()
