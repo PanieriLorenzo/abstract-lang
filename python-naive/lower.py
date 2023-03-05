@@ -3,7 +3,7 @@ from __future__ import annotations
 from ast_ import ASTNode, NamedSet, SetBody
 
 
-def optimize(ast: ASTNode):
+def lower(ast: ASTNode):
     match ast:
         case NamedSet(_, _):
             return ast.dedupe().percolate().expand().normalize()

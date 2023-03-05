@@ -1,73 +1,33 @@
 from parser_ import parse
 from preprocessor import preprocess
-from optimizer import optimize
+from lower import lower
 import codegen_mermaid
 import codegen_aml
+from argparse import ArgumentParser
+from pathlib import Path
 
-
-s1 = """# this is a comment lmao
-A;
-B {}
-U -> V;
-D -> C.A;
-C.B -> D;
-Foo -> Bar -> Baz.A;
-A.A.A.A -> B.B.B.B -> C.C.C.C;
-A .A. A . A -> B   .B  .    B. B    ->C. C.  C.   C        ;;; ;;
-Baz.B -> Foo.A;
-C {
-    A;
-    B {}
-    C { A; }
-    D -> C.A;
-}
-Foo {
-    C;
-}
-
-# some fucky shit:
-X    . Y.Z ->Z.     Y.   X ;
-;; ;    ;; ;  ;;;
-"""
-
-s2 = """\
-A.A;
-B.B;
-"""
-
-s3 = """\
-A.A;
-A.A;
-"""
-
-s4 = """\
-A {
-    B;
-    C;
-    B -> C;
-}
-"""
-
-s5 = """\
-A {
-    B;
-    C;
-    D;
-    B -> C -> D;
-}
-"""
-
-s7 = """\
-A.A;
-B.A;
-
-A -> B;
-B.A -> A.A;
-"""
 
 if __name__ == "__main__":
-    print(codegen_mermaid.codegen(
-        optimize(
-            parse(preprocess(codegen_aml.codegen(optimize(parse(preprocess(s7))))))
-        )
-    ))
+    parser = ArgumentParser()
+    parser.add_argument("-i", "--input", required=True)
+    parser.add_argument("-o", "--output")
+    parser.add_argument("-f", "--format", choices=["aml", "mermaid"], default="mermaid")
+    args = parser.parse_args()
+    if args.output is None:
+        out = Path(".") / "build" / (args.input + "." + args.format)
+    else:
+        out = Path(args.output)
+
+    with open(args.input) as file:
+        src = file.read()
+    src = preprocess(src)
+    ast = lower(parse(src))
+
+    if args.format == "mermaid":
+        src = codegen_mermaid.codegen(ast)
+    if args.format == "aml":
+        src = codegen_aml.codegen(ast)
+
+    out.parents[0].mkdir(parents=True, exist_ok=True)
+    with open(out, "w") as file:
+        file.write(src)

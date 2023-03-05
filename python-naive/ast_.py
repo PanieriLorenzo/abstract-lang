@@ -102,7 +102,7 @@ class Map(TraitPPrint):
                 break
             yield cur.left
             cur = cur.right
-    
+
     def extract_sets(self) -> list[NamedSet]:
         ret = [NamedSet.empty(self.left).normalize()]
         if type(self.right) == Id:
@@ -142,7 +142,7 @@ class SetBody(TraitPPrint):
     def normalize(self) -> SetBody:
         if self.left is None:
             return self
-        
+
         ret = SetBody(
             self.left.normalize() if type(self.left) == NamedSet else self.left,
             self.right.normalize() if self.right is not None else None,
@@ -151,8 +151,6 @@ class SetBody(TraitPPrint):
             for s in self.left.extract_sets():
                 ret = ret.insert(s)
         return ret
-
-
 
     def insert(self, other: NamedSet | Map) -> SetBody:
         return SetBody(other, self)

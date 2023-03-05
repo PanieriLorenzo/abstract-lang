@@ -1,7 +1,7 @@
 """entrypoint for the entire toolchain"""
 import re
 from typing import Tuple
-from ast_ import Id, ASTNode, Map, SetBody, NamedSet, Thing
+from ast_ import Id, Map, SetBody, NamedSet
 
 
 _id_flat_re = re.compile(r"^(\w+)$")
@@ -49,13 +49,12 @@ def _nested_brace_helper(s: str) -> Tuple[str, str]:
     i = 1
     itr = iter(s[1:])
     while True:
-
         # we start with 1 brace, each time we enter a deeper layer, n_braces
         # is incremented, it can only be 0 if we have exited all layers, in
         # which case, we don't need to get the next character, and we can
         # return the splitted string at the index we got to.
         if n_braces == 0:
-            return (s[1 : i - 1].strip(), s[i:].strip())
+            return (s[1: i - 1].strip(), s[i:].strip())
 
         # if we get here and the string is exhausted, there is no way for
         # n_braces to get to 0, so there must be an unmatched brace
@@ -111,16 +110,3 @@ def _parse_set_body(s: str) -> SetBody:
 
 def parse(s: str) -> NamedSet:
     return NamedSet(Id.flat("__main__"), _parse_set_body(s))
-
-    # def parse(src: ASTNode) -> SetBody:
-    #     """constructs the AST from source recursively"""
-
-    #     match src:
-    #         # this is always the initial case, when parsing the string
-    #         # it will yield an AST type which wraps the remaining
-    #         # unparsed source code, then it will recursively call
-    #         # parse() on the children.
-    #         case Source(s):
-    #             return parse(_parse_source(s))
-
-    return SetBody([])
