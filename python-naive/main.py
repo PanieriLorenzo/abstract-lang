@@ -1,8 +1,8 @@
 from parser_ import parse
 from ast_ import ASTNode
 from preprocessor import preprocess
-from ast_viz import *
-from optimizer import *
+from optimizer import optimize
+import codegen_aml
 
 
 s1 = """# this is a comment lmao
@@ -58,6 +58,4 @@ A {
 """
 
 if __name__ == "__main__":
-
-    a = parse(preprocess(s5))
-    a.normalize().percolate().dedupe().pprint()
+    print(codegen_aml.codegen(optimize(parse(preprocess(s1)))))

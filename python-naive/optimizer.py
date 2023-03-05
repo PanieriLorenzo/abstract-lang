@@ -1,18 +1,15 @@
 """takes a freshly parsed AST and reduces its complexity to the most compact AST"""
 from __future__ import annotations
-from ast_ import ASTNode, NamedSet
+from ast_ import ASTNode, NamedSet, SetBody
 
 
-class _OptimizerContext:
-    def __init__(self) -> None:
-        self.ast: ASTNode = None
-
-    def optimize(self, ast: ASTNode) -> _OptimizerContext:
-        match ast:
-            case NamedSet(_, _):
-                pass
-
-
-def optimize_ast(ast: ASTNode) -> ASTNode:
-    c = _OptimizerContext().optimize(ast)
-    return c.ast
+def optimize(ast: ASTNode):
+    match ast:
+        case NamedSet(_, _):
+            return ast.normalize().percolate().dedupe()
+        case SetBody(_, _):
+            return ast.normalize().dedupe()
+        case None:
+            raise TypeError
+        case _:
+            return ast

@@ -38,6 +38,11 @@ class Id(TraitPPrint):
 
     def is_flat(self) -> bool:
         return self.right is None
+    
+    def remove(self) -> None | Id:
+        if self.right is None:
+            return None
+        return Id(self.left, self.right.remove())
 
     @classmethod
     def from_list(cls, l: list[str]) -> Id:  # noqa E741
@@ -86,24 +91,17 @@ class Map(TraitPPrint):
         self.right._pprint(indent + 1)
 
     def _percolate(self, parent: Id) -> Map:
-        """Pull this map out of the parent
-
-        ## Examples
-        ```
-        A {
-            A;
-            B;
-            A -> B;
-        }
-
-        # becomes
-        A {
-            A;
-            B;
-        }
-        A.A -> A.B;
-        ```"""
+        """Pull this map out of the parent"""
         return Map(parent + self.left, self.right._percolate(parent))
+    
+    def __iter__(self):
+        cur = self
+        while True:
+            if type(cur) == Id:
+                yield cur
+                break
+            yield cur.left
+            cur = cur.right
 
 
 @dataclass(eq=True, frozen=True)
@@ -147,6 +145,11 @@ class SetBody(TraitPPrint):
                 return
             yield cur.left
             cur = cur.right
+    
+    def is_empty(self) -> bool:
+        if self.left is None and self.right is not None:
+            raise SystemError
+        return self.left is None
 
     @classmethod
     def from_list(cls, l: list[Thing]) -> SetBody:  # noqa E741
@@ -170,6 +173,9 @@ class NamedSet(TraitPPrint):
         if type(i) == Id:
             return cls(i, SetBody.empty())
         raise TypeError
+    
+    def is_empty(self) -> bool:
+        return self.set_.is_empty()
 
     def _pprint(self, indent: int):
         print("   " * indent, "named_set")
