@@ -1,6 +1,6 @@
-from parser_ import *
-from ast_ import *
-from preprocessor import *
+from parser_ import parse
+from ast_ import ASTNode
+from preprocessor import preprocess
 from ast_viz import *
 from optimizer import *
 
@@ -35,8 +35,29 @@ A.A;
 B.B;
 """
 
+s3 = """\
+A.A;
+A.A;
+"""
+
+s4 = """\
+A {
+    B;
+    C;
+    B -> C;
+}
+"""
+
+s5 = """\
+A {
+    B;
+    C;
+    D;
+    B -> C -> D;
+}
+"""
+
 if __name__ == "__main__":
 
-    a = parse(preprocess(s1))
-    a.pprint()
-    a.normalize().pprint()
+    a = parse(preprocess(s5))
+    a.normalize().percolate().dedupe().pprint()
