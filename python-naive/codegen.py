@@ -2,13 +2,23 @@ from __future__ import annotations
 from ast_ import ASTNode, Id
 
 
+def unscoped_id_generator(id: Id) -> str:
+    return "_".join(list(id))
+
+
 class TraitCodegen:
-    def __init__(self, indent_width: int = 4, minified: bool = False):
+    def __init__(
+        self,
+        indent_width: int = 4,
+        minified: bool = False,
+        id_generator=unscoped_id_generator,
+    ):
         self._indent_width = indent_width
         self._indent = 0
         self._minified = minified
         self.out = ""
         self._scope: None | Id = None
+        self.id_generator = id_generator
 
     def indent(self) -> None:
         self._indent += 1

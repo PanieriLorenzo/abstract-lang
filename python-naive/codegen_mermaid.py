@@ -6,26 +6,27 @@ from codegen import TraitCodegen
 
 class _CodegenContext(TraitCodegen):
     def _print_header(self) -> None:
-        self.println("# generated with the python-naive AML compiler")
-        self.println("# ============================================")
+        self.println("%% generated with the python-naive AML compiler")
+        self.println("%% ============================================")
         self.println("")
+        self.println("graph TD")
+        self.indent()
 
     def _print_footer(self) -> None:
+        self.unindent()
         self.println("")
 
     def _codegen(self, ast: ASTNode) -> None:
         match ast:
             case NamedSet(id, set_):
-                self.print_(self._indent * self._indent_width * " ")
-                self.print_(f"{id.left}")
                 if set_.is_empty():
-                    self.print_(" {};\n")
+                    self.println(f"{self.id_generator(self._scope + id)}")
                     return
-                self.print_(" {\n")
-                self.indent()
+                self.println(f"subgraph {self.id_generator(self._scope + id)}")
+                self.enter_scope(id)
                 self._codegen(set_)
-                self.unindent()
-                self.println("};")
+                self.exit_scope()
+                self.println("end")
             case SetBody(left, right):
                 self._codegen(left)
                 self._codegen(right)
@@ -34,14 +35,11 @@ class _CodegenContext(TraitCodegen):
                 self.print_(self._indent * self._indent_width * " ")
                 self._codegen(ids[0])
                 for id in ids[1:]:
-                    self.print_(" -> ")
+                    self.print_(" --> ")
                     self._codegen(id)
-                self.print_(";\n")
-            case Id(left, right):
-                self.print_(f"{left}")
-                if right is not None:
-                    self.print_(".")
-                    self._codegen(right)
+                self.print_("\n")
+            case Id(_, _):
+                self.print_(self.id_generator(ast))
 
 
 def codegen(ast: NamedSet) -> str:

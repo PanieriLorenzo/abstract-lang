@@ -38,7 +38,7 @@ class Id(TraitPPrint):
 
     def is_flat(self) -> bool:
         return self.right is None
-    
+
     def remove(self) -> None | Id:
         if self.right is None:
             return None
@@ -93,7 +93,7 @@ class Map(TraitPPrint):
     def _percolate(self, parent: Id) -> Map:
         """Pull this map out of the parent"""
         return Map(parent + self.left, self.right._percolate(parent))
-    
+
     def __iter__(self):
         cur = self
         while True:
@@ -102,6 +102,18 @@ class Map(TraitPPrint):
                 break
             yield cur.left
             cur = cur.right
+    
+    def extract_sets(self) -> list[NamedSet]:
+        ret = [NamedSet.empty(self.left).normalize()]
+        if type(self.right) == Id:
+            return ret + [NamedSet.empty(self.right).normalize()]
+        return ret + self.right.extract_sets()  # type: ignore
+
+    def expand(self) -> list[Map]:
+        flat = list(self)
+        if len(flat) == 2:
+            return [self]
+        return [Map(e, flat[i + 1]) for i, e in enumerate(flat[:-1])]
 
 
 @dataclass(eq=True, frozen=True)
@@ -130,12 +142,19 @@ class SetBody(TraitPPrint):
     def normalize(self) -> SetBody:
         if self.left is None:
             return self
-        return SetBody(
+        
+        ret = SetBody(
             self.left.normalize() if type(self.left) == NamedSet else self.left,
             self.right.normalize() if self.right is not None else None,
         )
+        if type(self.left) == Map:
+            for s in self.left.extract_sets():
+                ret = ret.insert(s)
+        return ret
 
-    def insert(self, other: NamedSet) -> SetBody:
+
+
+    def insert(self, other: NamedSet | Map) -> SetBody:
         return SetBody(other, self)
 
     def __iter__(self):
@@ -145,7 +164,7 @@ class SetBody(TraitPPrint):
                 return
             yield cur.left
             cur = cur.right
-    
+
     def is_empty(self) -> bool:
         if self.left is None and self.right is not None:
             raise SystemError
@@ -173,7 +192,7 @@ class NamedSet(TraitPPrint):
         if type(i) == Id:
             return cls(i, SetBody.empty())
         raise TypeError
-    
+
     def is_empty(self) -> bool:
         return self.set_.is_empty()
 
@@ -223,6 +242,11 @@ class NamedSet(TraitPPrint):
     def percolate(self) -> NamedSet:
         p = self._percolate(None, True)
         return p[0]
+
+    def expand(self) -> NamedSet:
+        sets: list[NamedSet] = [s.expand() for s in self if type(s) == NamedSet]
+        maps: list[Map] = list(chain(*[m.expand() for m in self if type(m) == Map]))  # type: ignore # noqa E501
+        return NamedSet(self.id, SetBody.from_list(sets + maps))
 
 
 ASTNode = NamedSet | SetBody | Map | Id | None

@@ -89,7 +89,6 @@ _irregular_set_re = re.compile(
 
 
 def _parse_set_body(s: str) -> SetBody:
-    print(s)
     if m := _empty_statement.match(s):
         return _parse_set_body(m.group("rest"))
     if (m := _empty_set_1_re.match(s)) or (m := _empty_set_2_re.match(s)):

@@ -6,7 +6,7 @@ from ast_ import ASTNode, NamedSet, SetBody
 def optimize(ast: ASTNode):
     match ast:
         case NamedSet(_, _):
-            return ast.normalize().percolate().dedupe()
+            return ast.dedupe().percolate().expand().normalize()
         case SetBody(_, _):
             return ast.normalize().dedupe()
         case None:
