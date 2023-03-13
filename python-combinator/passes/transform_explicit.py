@@ -1,0 +1,1 @@
+"""extracts implied sets as a separate definition"""
