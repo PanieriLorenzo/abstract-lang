@@ -6,24 +6,6 @@ import sys
 import ast_
 
 
-class CompilerPanic(Exception):
-    """An internal fatal error from which the compiler cannot safely recover"""
-
-    def __init__(self, msg, content):
-        super().__init__(f"{msg}: {content}")
-
-
-s0 = "# a comment"
-s1 = "'lel\\'lol'"
-s2 = "foo_bar_baz"
-s3 = "foo . bar.baz"
-s4 = "A. A ->B .B -> C.C->D"
-s5 = " A . A -> B . B ;"
-s6 = f"{s5}\n# gneurshk\n{s5}\n;A[A;B;]  ; A as 'a\\''; A;"
-
-# mandatory whitespace
-_ws_sep = regex(r"\s+")
-
 # non-mandatory whitespace
 _ws = regex(r"\s*")
 
@@ -78,10 +60,6 @@ named_set.become(
 
 program = (set_body << eof).map(ast_.Program)
 
-print(_comment.parse(s0))
-print(string_literal.parse(s1))
-print(_simple_identifier.parse(s2))
-print(qualified_identifier.parse(s3))
-print(map_.parse(s4))
-print(_statement.parse(s5))
-print(program.parse(s6))
+
+def parse(s: str) -> ast_.Program:
+    return program.parse(s)
