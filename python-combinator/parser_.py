@@ -22,10 +22,12 @@ kw_as = string('as')
 open_bracket = string('[')
 close_bracket = string(']')
 semicolon = string(';')
-quotes = string('"')
+double_quote = string('"')
+quote = string("'")
 
 # TODO: unescape escaped character after parse
-string_literal_test = quotes >> regex(r'(?:[^"\\]|\\.)*') << quotes
+string_literal_test = quote >> regex(r"(?:[^'\\]|\\.)*") << quote \
+                    | double_quote >> regex(r'(?:[^"\\]|\\.)*') << double_quote
 qualified_identifier_test = seq(identifier << period, identifier)
 map_test = seq(identifier << arrow, identifier)
 
