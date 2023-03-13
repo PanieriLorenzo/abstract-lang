@@ -1,0 +1,17 @@
+_quote                  = "'";
+_kw_as                  = 'as';
+_op_arrow               = '->';
+_op_period              = '\.';
+_semicolon              = ';';
+_open_bracket           = '[';
+_close_bracket          = ']';
+_comment                = '#[^\n]*\n$';
+
+string_literal          = _qoute, "(?:[^'\\]|\\.)*", _quote;
+simple_identifier       = "\w+";
+qualified_identifier    = simple_identifier, { _op_period, simple_identifier };
+map_                    = qualified_identifier, _op_arrow, qualified_identifier, { _op_arrow, qualified_identifier };
+set_body                = { [ map_ | named_set ], ";" | _comment };
+named_set               = qualified_identifier, [ _open_bracket, set_body, _close_bracket ], [ _kw_as, string_literal ];
+
+program                 = ?SOF?, set_body, ?EOF?;
