@@ -14,12 +14,20 @@ class CompilerPanic(Exception):
 #     def __init__(self, msg, content):
 #         super().__init__(f"{msg}: {content}")
 
-
+# tokens
 identifier = regex(r"\b\w+\b")
 period = string('.')
-qualified_identifier = seq(identifier << period, identifier)
+arrow = string('->')
+kw_as = string('as')
+open_bracket = string('[')
+close_bracket = string(']')
+semicolon = string(';')
+quotes = string('"')
 
-print(qualified_identifier.parse("A.A"))
+# TODO: unescape escaped character after parse
+string_literal_test = quotes >> regex(r'(?:[^"\\]|\\.)*') << quotes
+qualified_identifier_test = seq(identifier << period, identifier)
+map_test = seq(identifier << arrow, identifier)
 
-
-
+print(qualified_identifier_test.parse("A.A"))
+print(string_literal_test.parse('"\\"gneurhsk\\""'))
