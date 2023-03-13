@@ -11,3 +11,12 @@ class StrRange:
         self._ref = memoryview(s)
         self.start = 0
         self.end = len(self._ref)
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            
+
+
+a = "gneurhsk"
+b = a[0:2]
+print(id(a) - id(b))
