@@ -55,10 +55,10 @@ named_set.become(
         .skip(_close_bracket)
         .optional(),
         label=_ws.then(_kw_as).then(_ws).then(string_literal).optional(),
-    ).combine_dict(ast_.NamedSet)
+    ).combine_dict(ast_.NamedSet.new)
 )
 
-program = (set_body << eof).map(ast_.Program)
+program = (set_body << _ws << eof).map(ast_.Program)
 
 
 def parse(s: str) -> ast_.Program:

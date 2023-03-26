@@ -5,7 +5,7 @@
 ### Target: Mermaid
 
 1. `parse`
-1. `generate_symbol_table`
+1. `annotate_identifiers`
 1. `lower_explicit`
 1. `lower_dedupe`
 1. `lower_percolate_maps`
