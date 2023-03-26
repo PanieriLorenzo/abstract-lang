@@ -54,6 +54,9 @@ class SetBody(ASTNode):
     def empty(cls) -> SetBody:
         return SetBody([])
 
+    def __len__(self) -> int:
+        return len(self.things_)
+
 
 @dataclass(eq=True, frozen=True)
 class NamedSet(ASTNode):
@@ -73,16 +76,3 @@ class NamedSet(ASTNode):
 @dataclass(eq=True, frozen=True)
 class Program(ASTNode):
     set_: SetBody
-
-
-@dataclass
-class TransformContext:
-    """Base class to store the state during an AST transformation"""
-
-    current_namespace: Id = Id.empty()
-
-    def enter_namespace(self, namespace_id: Id):
-        self.current_namespace += namespace_id
-
-    def exit_namespace(self, num: int) -> list[tuple[Id, Id]]:
-        return [self.current_namespace.pop() for _ in range(num)]
