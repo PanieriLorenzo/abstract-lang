@@ -1,6 +1,9 @@
 from codegen_context import CodegenContext
 from ast_ import Program, ASTNode, NamedSet, Id, SetBody, Map
 from typing import Optional
+import config
+from datetime import datetime, timezone
+from codegen import SourceBuffer
 
 
 class NamedSetContext(CodegenContext):
@@ -23,32 +26,46 @@ class NamedSetContext(CodegenContext):
         self.writeln("];")
 
 
-def _codegen_aml(cc: CodegenContext, ast: ASTNode) -> str:
+def _codegen_aml(ast: ASTNode) -> SourceBuffer:
+    buffer = SourceBuffer()
     match ast:
         case Program(set_):
-            return _codegen_aml(cc, set_)
+            buffer.writeline("# !!! Machine-generated code ahead, tread with care !!!")
+            buffer.newline()
+            buffer.writeline(f"# Generated at {datetime.now(timezone.utc).isoformat()}")
+            buffer.writeline(f"# {config.output_header}")
+            buffer.newline()
+            buffer.writebuf(_codegen_aml(set_))
+            return buffer
         case SetBody(things_):
-            return "".join([_codegen_aml(cc, t) for t in things_])
+            for t in things_:
+                buffer.writebuf(_codegen_aml(t))
+            return buffer
         case NamedSet(id_, set_, label):
-            id_s = _codegen_aml(cc, id_)
+            # TODO: this can be more concise
+            id_s = _codegen_aml(id_)
+            buffer.write(f"{id_s.consolidate()} ")
             if len(set_) == 0:
-                cc.flush()
-                cc.write(f"{id_s} []")
+                buffer.write("[]")
                 if label is not None:
-                    cc.write(f" as '{label}';\n")
-                    return cc.buffer
-                cc.write(";\n")
-                return cc.buffer
-            with NamedSetContext(cc=cc, id_s=id_s, label=label) as nsc:
-                nsc.writeln("gneurshk;")
-                ret = nsc.buffer
-            return ret
+                    buffer.writeline(f" as '{label}';")
+                    return buffer
+                buffer.writeline(";")
+                return buffer
+            buffer.writeline("[")
+            buffer.writebuf(_codegen_aml(set_).indent())
+            buffer.write("]")
+            if label is not None:
+                buffer.write(f" as '{label}'")
+            buffer.writeline(";")
+            return buffer
         case Id(strs, _):
-            return ".".join(strs)
+            return buffer.write(".".join(strs))
         case Map(ids):
-            return " -> ".join([_codegen_aml(cc, i) for i in ids]) + ";\n"
+            return buffer.writeline(
+                " -> ".join([_codegen_aml(i).consolidate() for i in ids]) + ";"
+            )
 
 
 def codegen_aml(ast: Program) -> str:
-    ic = CodegenContext()
-    return _codegen_aml(ic, ast)
+    return _codegen_aml(ast).consolidate_with_trailing_newline()

@@ -6,7 +6,7 @@ from passes.transform_explicit import transform_explicit
 from targets.codegen_aml import codegen_aml
 
 if __name__ == "__main__":
-    with open("../examples/04.aml") as file:
+    with open("../examples/05.aml") as file:
         p = parse(file.read())
 
         validate_cardinality(p)
